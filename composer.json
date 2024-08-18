@@ -1,0 +1,29 @@
+{
+    "name": "granada-pride/clickpaysa",
+    "description": "Clickpaysa Payment Gateway Integration with Laravel Framework",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "GranadaPride\\Clickpay\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GranadaPride\\Clickpay\\ClickpayServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Hussein Gaber",
+            "email": "148823784+hussaingaber@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "optimize-autoloader": true,
+        "classmap-authoritative": true
+    }
+}
