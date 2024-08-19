@@ -15,7 +15,7 @@ class ClickpayServiceProvider extends ServiceProvider
         });
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/clickpay.php',
+            __DIR__ . '/../config/clickpay.php',
             'clickpay'
         );
     }
@@ -23,7 +23,7 @@ class ClickpayServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/config/clickpay.php' => config_path('clickpay.php'),
+            __DIR__ . '/../config/clickpay.php' => config_path('clickpay.php'),
         ], 'clickpay-config');
     }
 }
