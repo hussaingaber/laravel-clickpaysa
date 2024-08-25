@@ -172,7 +172,7 @@ class Clickpay
     public function queryTransaction(string $transactionReference)
     {
         try {
-            $this->initialize()
+            return $this->initialize()
                 ->post('payment/query', [
                     'profile_id' => intval($this->profileId),
                     'tran_ref' => $transactionReference,
