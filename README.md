@@ -144,7 +144,8 @@ $payment = new Payment(
     shipping: $shipping,
     callbackUrl: 'https://yourdomain.com/callback',
     returnUrl: 'https://yourdomain.com/return',
-    paypageLang: 'en'
+    paypageLang: 'en',
+    hideShipping: false  // Set to true if you want to hide shipping details on the payment page
 );
 
 // Generate Payment Page
