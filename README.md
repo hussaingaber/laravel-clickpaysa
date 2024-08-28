@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'currency' => env('CLICKPAY_CURRENCY', 'USD'),
+    'currency' => env('CLICKPAY_CURRENCY', 'SAR'),
 
     /*
     |--------------------------------------------------------------------------
@@ -105,7 +105,7 @@ Make sure to set the required environment variables in your `.env` file:
 ```dotenv
 CLICKPAY_PROFILE_ID=your_profile_id
 CLICKPAY_SERVER_KEY=your_server_key
-CLICKPAY_CURRENCY=USD
+CLICKPAY_CURRENCY=SAR
 CLICKPAY_BASE_URL=https://secure.clickpay.com.sa
 ```
 
@@ -115,7 +115,7 @@ CLICKPAY_BASE_URL=https://secure.clickpay.com.sa
 
 Here's how to create a payment page using this package:
 
-``` php
+```php
 use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\DTO\Customer;
 use GranadaPride\Clickpay\DTO\Payment;
@@ -125,13 +125,13 @@ $clickpay = app(PaymentGatewayInterface::class);
 
 // Set Customer Information using the Customer DTO
 $customer = new Customer(
-    name: 'John Doe',
+    name: 'Ahmad Mohamed',
     phone: '+123456789',
-    email: 'johndoe@example.com',
+    email: 'ahmad_mohamed@example.com',
     street: '123 Main St',
     city: 'Cityville',
     state: 'Stateland',
-    country: 'US',
+    country: 'KSA',
     zipCode: '12345'
 );
 
@@ -147,14 +147,13 @@ $payment = new Payment(
     shipping: $shipping,
     callbackUrl: 'https://yourdomain.com/callback',
     returnUrl: 'https://yourdomain.com/return',
-    paypageLang: 'en',
+    paypageLang: 'ar',
     hideShipping: false  // Set to true if you want to hide shipping details on the payment page
 );
 
 // Generate Payment Page
 $response = $clickpay->createPaymentPage($payment);
 
-// Handle the response
 dd($response);
 ```
 
@@ -183,7 +182,6 @@ payment is authorized at the time of order placement, but you only want to captu
 use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
-// Assuming you've set up dependency injection correctly
 $clickpay = app(PaymentGatewayInterface::class);
 
 $response = $clickpay->capturePayment(
@@ -194,7 +192,6 @@ $response = $clickpay->capturePayment(
     cartDescription: 'Capture reason'
 );
 
-// Handle the response
 dd($response);
 ```
 
@@ -209,7 +206,6 @@ requests a refund for their order.
 use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
-// Assuming you've set up dependency injection correctly
 $clickpay = app(PaymentGatewayInterface::class);
 
 $response = $clickpay->refundPayment(
@@ -220,7 +216,6 @@ $response = $clickpay->refundPayment(
     cartDescription: 'Refund reason'
 );
 
-// Handle the response
 dd($response);
 ```
 
@@ -235,7 +230,6 @@ an order is canceled before it is fulfilled.
 use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
-// Assuming you've set up dependency injection correctly
 $clickpay = app(PaymentGatewayInterface::class);
 
 $response = $clickpay->voidPayment(
@@ -246,7 +240,6 @@ $response = $clickpay->voidPayment(
     cartDescription: 'Void reason'
 );
 
-// Handle the response
 dd($response);
 ```
 
