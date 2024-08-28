@@ -8,6 +8,9 @@
 4. [Usage](#usage)
     - [Creating a PayPage](#create-paypage)
     - [Querying Transactions](#query-transaction)
+    - [Capturing a Payment](#capturing-a-payment)
+    - [Refunding a Payment](#refunding-a-payment)
+    - [Voiding a Payment](#voiding-a-payment)
 5. [Troubleshooting](#troubleshooting)
 6. [Testing](#testing)
 7. [Contribution](#contribution)
@@ -166,6 +169,84 @@ $clickpay = app(PaymentGatewayInterface::class);
 
 $response = $clickpay->queryTransaction('TST2422201903602');
 
+dd($response);
+```
+
+### Capturing a Payment
+
+The `capturePayment` method allows you to capture a previously authorized transaction. This is typically used when a
+payment is authorized at the time of order placement, but you only want to capture the funds when the goods are shipped.
+
+**Example:**
+
+```php
+use GranadaPride\Clickpay\ClickpayClient;
+use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
+
+// Assuming you've set up dependency injection correctly
+$clickpay = app(PaymentGatewayInterface::class);
+
+$response = $clickpay->capturePayment(
+    transactionReference: 'TST2112600164150',
+    amount: 1.3,
+    currency: 'SAR',
+    cartId: 'cart_66666',
+    cartDescription: 'Capture reason'
+);
+
+// Handle the response
+dd($response);
+```
+
+### Refunding a Payment
+
+The `refundPayment` method is used to refund a previously completed transaction. This can be useful when a customer
+requests a refund for their order.
+
+**Example:**
+
+```php
+use GranadaPride\Clickpay\ClickpayClient;
+use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
+
+// Assuming you've set up dependency injection correctly
+$clickpay = app(PaymentGatewayInterface::class);
+
+$response = $clickpay->refundPayment(
+    transactionReference: 'TST2016700000692',
+    amount: 1.3,
+    currency: 'SAR',
+    cartId: 'cart_66666',
+    cartDescription: 'Refund reason'
+);
+
+// Handle the response
+dd($response);
+```
+
+### Voiding a Payment
+
+The `voidPayment` method allows you to void a previously authorized or captured transaction. This is typically used when
+an order is canceled before it is fulfilled.
+
+**Example:**
+
+```php
+use GranadaPride\Clickpay\ClickpayClient;
+use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
+
+// Assuming you've set up dependency injection correctly
+$clickpay = app(PaymentGatewayInterface::class);
+
+$response = $clickpay->voidPayment(
+    transactionReference: 'TST2016700000692',
+    amount: 1.3,
+    currency: 'SAR',
+    cartId: 'cart_66666',
+    cartDescription: 'Void reason'
+);
+
+// Handle the response
 dd($response);
 ```
 

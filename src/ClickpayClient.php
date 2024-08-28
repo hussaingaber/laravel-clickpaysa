@@ -47,6 +47,41 @@ class ClickpayClient implements PaymentGatewayInterface
         }
     }
 
+    public function capturePayment(string $transactionReference, float $amount, string $currency, string $cartId, string $cartDescription): array
+    {
+        return $this->processTransaction('capture', $transactionReference, $amount, $currency, $cartId, $cartDescription);
+    }
+
+    public function refundPayment(string $transactionReference, float $amount, string $currency, string $cartId, string $cartDescription): array
+    {
+        return $this->processTransaction('refund', $transactionReference, $amount, $currency, $cartId, $cartDescription);
+    }
+
+    public function voidPayment(string $transactionReference, float $amount, string $currency, string $cartId, string $cartDescription): array
+    {
+        return $this->processTransaction('void', $transactionReference, $amount, $currency, $cartId, $cartDescription);
+    }
+
+    private function processTransaction(string $transactionType, string $transactionReference, float $amount, string $currency, string $cartId, string $cartDescription): array
+    {
+        try {
+            return $this->httpClient->post('payment/request', [
+                'profile_id' => intval($this->profileId),
+                'tran_type' => $transactionType,
+                'tran_class' => 'ecom',
+                'cart_id' => $cartId,
+                'cart_currency' => $currency,
+                'cart_amount' => $amount,
+                'cart_description' => $cartDescription,
+                'tran_ref' => $transactionReference,
+            ]);
+
+        } catch (Exception $e) {
+            throw new PaymentException("Failed to process $transactionType transaction: " . $e->getMessage());
+        }
+    }
+
+
     private function buildPayload(Payment $payment): array
     {
         return [
