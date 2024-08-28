@@ -26,10 +26,10 @@ class ClickpayClient implements PaymentGatewayInterface
         $this->currency = $currency;
     }
 
-    public function createPaymentPage(Payment $details): array
+    public function createPaymentPage(Payment $payment): array
     {
         try {
-            return $this->httpClient->post('payment/request', $this->buildPayload($details));
+            return $this->httpClient->post('payment/request', $this->buildPayload($payment));
         } catch (Exception $e) {
             throw new PaymentException('Failed to create Clickpay payment page: ' . $e->getMessage());
         }
@@ -47,25 +47,26 @@ class ClickpayClient implements PaymentGatewayInterface
         }
     }
 
-    private function buildPayload(Payment $details): array
+    private function buildPayload(Payment $payment): array
     {
         return [
             'profile_id' => intval($this->profileId),
             'tran_type' => 'sale',
             'tran_class' => 'ecom',
-            'paypage_lang' => $details->paypageLang,
-            'callback' => $details->callbackUrl,
-            'return' => $details->returnUrl,
+            'paypage_lang' => $payment->paypageLang,
+            'callback' => $payment->callbackUrl,
+            'return' => $payment->returnUrl,
             'user_defined' => [
                 'udf3' => 'UDF3 Test3',
                 'udf9' => 'UDF9 Test9',
             ],
-            'customer_details' => $details->customer->toArray(),
-            'shipping_details' => $details->shipping->toArray(),
-            'cart_id' => $details->cartId,
-            'cart_amount' => $details->cartAmount,
-            'cart_description' => $details->cartDescription,
+            'customer_details' => $payment->customer->toArray(),
+            'shipping_details' => $payment->shipping->toArray(),
+            'cart_id' => $payment->cartId,
+            'cart_amount' => $payment->cartAmount,
+            'cart_description' => $payment->cartDescription,
             'cart_currency' => $this->currency,
+            'hide_shipping' => $payment->hideShipping,
         ];
     }
 }
