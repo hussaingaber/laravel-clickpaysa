@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GranadaPride\Clickpay\DTO;
 
-class CustomerDetails
+class Customer
 {
     public function __construct(
         public string $name,

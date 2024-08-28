@@ -114,14 +114,14 @@ Here's how to create a payment page using this package:
 
 ``` php
 use GranadaPride\Clickpay\ClickpayClient;
-use GranadaPride\Clickpay\DTO\CustomerDetails;
-use GranadaPride\Clickpay\DTO\PaymentDetailsDTO;
+use GranadaPride\Clickpay\DTO\Customer;
+use GranadaPride\Clickpay\DTO\Payment;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
 $clickpay = app(PaymentGatewayInterface::class);
 
-// Set Customer Information using the CustomerDetails DTO
-$customerDetails = new CustomerDetails(
+// Set Customer Information using the Customer DTO
+$customer = new Customer(
     name: 'John Doe',
     phone: '+123456789',
     email: 'johndoe@example.com',
@@ -133,22 +133,22 @@ $customerDetails = new CustomerDetails(
 );
 
 // Use Customer Information for Shipping if it's the same
-$shippingDetails = $customerDetails;
+$shipping = $customer;
 
 // Set Payment Details
-$paymentDetails = new PaymentDetailsDTO(
+$payment = new Payment(
     cartId: 'CART123',
     cartAmount: 150.00,
     cartDescription: 'Sample Cart Description',
-    customer: $customerDetails,
-    shipping: $shippingDetails,
+    customer: $customer,
+    shipping: $shipping,
     callbackUrl: 'https://yourdomain.com/callback',
     returnUrl: 'https://yourdomain.com/return',
     paypageLang: 'en'
 );
 
 // Generate Payment Page
-$response = $clickpay->createPaymentPage($paymentDetails);
+$response = $clickpay->createPaymentPage($payment);
 
 // Handle the response
 dd($response);

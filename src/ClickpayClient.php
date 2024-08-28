@@ -7,7 +7,7 @@ namespace GranadaPride\Clickpay;
 use Exception;
 use GranadaPride\Clickpay\Contracts\HttpClientInterface;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
-use GranadaPride\Clickpay\DTO\PaymentDetailsDTO;
+use GranadaPride\Clickpay\DTO\Payment;
 use GranadaPride\Clickpay\Exceptions\PaymentException;
 
 class ClickpayClient implements PaymentGatewayInterface
@@ -26,7 +26,7 @@ class ClickpayClient implements PaymentGatewayInterface
         $this->currency = $currency;
     }
 
-    public function createPaymentPage(PaymentDetailsDTO $details): array
+    public function createPaymentPage(Payment $details): array
     {
         try {
             return $this->httpClient->post('payment/request', $this->buildPayload($details));
@@ -47,7 +47,7 @@ class ClickpayClient implements PaymentGatewayInterface
         }
     }
 
-    private function buildPayload(PaymentDetailsDTO $details): array
+    private function buildPayload(Payment $details): array
     {
         return [
             'profile_id' => intval($this->profileId),
