@@ -15,7 +15,9 @@
 
 ## Description
 
-Clickpaysa Payment Gateway Integration with Laravel Framework
+The `laravel-clickpaysa` package provides an easy way to integrate the Clickpaysa payment gateway into your Laravel
+applications. This package adheres to SOLID principles and uses modern PHP practices, ensuring your code is
+maintainable, testable, and scalable.
 
 ## Installation
 
@@ -33,36 +35,90 @@ After installation, publish the configuration file using the following command:
 php artisan vendor:publish --provider="GranadaPride\Clickpay\ClickpayServiceProvider"
 ```
 
-The configuration file clickpay.php will be added to your config directory. Here is a sample configuration:
+This will create a `config/clickpay.php` file. Here is an example of what the configuration file might look like:
 
-``` php
+```php
 return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clickpay Profile ID
+    |--------------------------------------------------------------------------
+    |
+    | This is your Clickpay profile ID, which is required for making API 
+    | requests. Ensure that this value is provided in your environment 
+    | configuration file (.env).
+    |
+    */
+
     'profile_id' => env('CLICKPAY_PROFILE_ID'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clickpay Server Key
+    |--------------------------------------------------------------------------
+    |
+    | Your Clickpay server key is used to authenticate API requests. Make 
+    | sure to keep this value secure and do not expose it in your version 
+    | control system. It should be stored in the .env file.
+    |
+    */
+
     'server_key' => env('CLICKPAY_SERVER_KEY'),
-    'currency' => env('CLICKPAY_CURRENCY'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Currency
+    |--------------------------------------------------------------------------
+    |
+    | The currency in which payments will be processed by default. You can 
+    | change this to any currency supported by Clickpay (e.g., USD, EUR).
+    | This value can also be configured in your .env file.
+    |
+    */
+
+    'currency' => env('CLICKPAY_CURRENCY', 'USD'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clickpay API Base URL
+    |--------------------------------------------------------------------------
+    |
+    | The base URL for the Clickpay API. This is typically the endpoint where 
+    | API requests are sent. You can change this value if Clickpay provides 
+    | a different URL for specific regions or environments (e.g., testing).
+    |
+    */
+
+    'base_url' => env('CLICKPAY_BASE_URL', 'https://secure.clickpay.com.sa'),
+
 ];
 ```
 
-## Configuration Options
+## Environment Variables
 
-- **profile_id:** Your Clickpay profile ID, required for API requests.
-- **server_key:** Your Clickpay server key, used for authentication.
-- **currency:** The currency code in which payments will be processed (e.g., USD).
+Make sure to set the required environment variables in your `.env` file:
+
+```dotenv
+CLICKPAY_PROFILE_ID=your_profile_id
+CLICKPAY_SERVER_KEY=your_server_key
+CLICKPAY_CURRENCY=USD
+CLICKPAY_BASE_URL=https://secure.clickpay.com.sa
+```
 
 ## Usage
 
-### Create PayPage
+### Creating a PayPage
 
-Here’s how to create a payment page using this package:
+Here's how to create a payment page using this package:
 
 ``` php
-use GranadaPride\Clickpay\Clickpay;
+use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\DTO\CustomerDetails;
+use GranadaPride\Clickpay\DTO\PaymentDetailsDTO;
+use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
-$clickpay = Clickpay::make();
-
-// Set Cart Information
-$clickpay->setCart('CART123', 150.00, 'Sample Cart Description');
+$clickpay = app(PaymentGatewayInterface::class);
 
 // Set Customer Information using the CustomerDetails DTO
 $customerDetails = new CustomerDetails(
@@ -76,46 +132,38 @@ $customerDetails = new CustomerDetails(
     zipCode: '12345'
 );
 
-$clickpay->setCustomer($customerDetails);
+// Use Customer Information for Shipping if it's the same
+$shippingDetails = $customerDetails;
 
-// Option 1: Use Customer Information for Shipping if it's the same
-$clickpay->useCustomerForShipping();
-
-// Option 2: Set Shipping Information separately if it's different
-$shippingDetails = new CustomerDetails(
-    name: 'Jane Doe',
-    phone: '+987654321',
-    email: 'janedoe@example.com',
-    street: '456 Market St',
-    city: 'Townsville',
-    state: 'Regionland',
-    country: 'US',
-    zipCode: '54321'
+// Set Payment Details
+$paymentDetails = new PaymentDetailsDTO(
+    cartId: 'CART123',
+    cartAmount: 150.00,
+    cartDescription: 'Sample Cart Description',
+    customer: $customerDetails,
+    shipping: $shippingDetails,
+    callbackUrl: 'https://yourdomain.com/callback',
+    returnUrl: 'https://yourdomain.com/return',
+    paypageLang: 'en'
 );
 
-$clickpay->setShipping($shippingDetails);
-
-// Set URLs and Language
-$clickpay->setCallbackUrl('https://yourdomain.com/callback')
-        ->setReturnUrl('https://yourdomain.com/return')
-        ->setPaypageLang('en');
-
 // Generate Payment Page
-$response = $clickpay->paypage();
+$response = $clickpay->createPaymentPage($paymentDetails);
 
 // Handle the response
 dd($response);
 ```
 
-### Query Transaction
+### Querying Transactions
 
 You can also query a transaction using its reference:
 
 ```php
-use GranadaPride\Clickpay\Clickpay;
+use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
-$response = Clickpay::make()
-    ->queryTransaction('TST2422201903602');
+$clickpay = app(PaymentGatewayInterface::class);
+
+$response = $clickpay->queryTransaction('TST2422201903602');
 
 dd($response);
 ```
@@ -124,13 +172,14 @@ dd($response);
 
 ### Common Issues
 
-- **Invalid Credentials:** Ensure that your profile_id and server_key in the configuration file are correct.
-- **Unsupported Region:** Double-check that the region in your configuration file is valid and supported by Clickpay.
+- **Invalid Credentials:** Ensure that your `profile_id` and `server_key` in the configuration file are correct.
+- **Unsupported Region:** Double-check that the `base_url` in your configuration file is valid and supported by
+  Clickpay.
 - **Transaction Failure:** Verify the transaction data (e.g., cart amount, customer details) to ensure it meets
-  Clickpay'
-  requirements.
+  Clickpay's requirements.
 
-If you encounter other issues, refer to the Clickpay API Documentation for more details.
+If you encounter other issues, refer to the [Clickpay API Documentation](https://secure.clickpay.com.sa) for more
+details.
 
 ## Testing
 
@@ -147,6 +196,6 @@ Contributions are welcome! If you’d like to contribute to this package, please
 
 ## License
 
-This package is open-source software licensed under the MIT License. Please see the License File for more information.
+This package is open-source software licensed under the MIT License. Please see the `License` File for more information.
 
 

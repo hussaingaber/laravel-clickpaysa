@@ -6,10 +6,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Merchant profile id
+    | Clickpay Profile ID
     |--------------------------------------------------------------------------
     |
-    | Your merchant profile id , you can find the profile id on your Clickpay Merchant’s Dashboard-profile.
+    | This is your Clickpay profile ID, which is required for making API
+    | requests. Ensure that this value is provided in your environment
+    | configuration file (.env).
     |
     */
 
@@ -17,10 +19,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Server Key
+    | Clickpay Server Key
     |--------------------------------------------------------------------------
     |
-    | You can find the Server key on your Clickpay Merchant’s Dashboard - Developers - Key management.
+    | Your Clickpay server key is used to authenticate API requests. Make
+    | sure to keep this value secure and do not expose it in your version
+    | control system. It should be stored in the .env file.
     |
     */
 
@@ -28,13 +32,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Currency
+    | Default Currency
     |--------------------------------------------------------------------------
     |
-    | The currency you registered in with Clickpay account
-    | Supported: "AED", "EGP", "SAR", "OMR", "JOD", "US"
+    | The currency in which payments will be processed by default. You can
+    | change this to any currency supported by Clickpay (e.g., USD, EUR).
+    | This value can also be configured in your .env file.
     |
     */
 
-    'currency' => env('CLICKPAY_CURRENCY'),
+    'currency' => env('CLICKPAY_CURRENCY', 'USD'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clickpay API Base URL
+    |--------------------------------------------------------------------------
+    |
+    | The base URL for the Clickpay API. This is typically the endpoint where
+    | API requests are sent. You can change this value if Clickpay provides
+    | a different URL for specific regions or environments (e.g., testing).
+    |
+    */
+
+    'base_url' => env('CLICKPAY_BASE_URL', 'https://secure.clickpay.com.sa'),
+
 ];
