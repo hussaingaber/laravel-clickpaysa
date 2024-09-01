@@ -117,14 +117,14 @@ Here's how to create a payment page using this package:
 
 ```php
 use GranadaPride\Clickpay\ClickpayClient;
-use GranadaPride\Clickpay\DTO\Customer;
-use GranadaPride\Clickpay\DTO\Payment;
+use GranadaPride\Clickpay\DTO\CustomerDTO;
+use GranadaPride\Clickpay\DTO\PaymentDTO;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
 $clickpay = app(PaymentGatewayInterface::class);
 
-// Set Customer Information using the Customer DTO
-$customer = new Customer(
+// Set CustomerDTO Information using the CustomerDTO DTO
+$customerDTO = new CustomerDTO(
     name: 'Ahmad Mohamed',
     phone: '+123456789',
     email: 'ahmad_mohamed@example.com',
@@ -135,24 +135,35 @@ $customer = new Customer(
     zipCode: '12345'
 );
 
-// Use Customer Information for Shipping if it's the same
-$shipping = $customer;
+// Use CustomerDTO Information for Shipping if it's the same
+$shippingDTO = $customerDTO;
 
-// Set Payment Details
-$payment = new Payment(
+// Set PaymentDTO Details
+$paymentDTO = new PaymentDTO(
     cartId: 'CART123',
     cartAmount: 150.00,
     cartDescription: 'Sample Cart Description',
-    customer: $customer,
-    shipping: $shipping,
+    customer: $customerDTO,
+    shipping: $shippingDTO,
     callbackUrl: 'https://yourdomain.com/callback',
     returnUrl: 'https://yourdomain.com/return',
     paypageLang: 'ar',
     hideShipping: false  // Set to true if you want to hide shipping details on the payment page
 );
 
-// Generate Payment Page
-$response = $clickpay->createPaymentPage($payment);
+// Or you can simply send only required data
+$paymentDTO = new PaymentDTO(
+    cartId: 'CART123',
+    cartAmount: 150.00,
+    cartDescription: 'Sample Cart Description',
+    callbackUrl: 'https://yourdomain.com/callback',
+    returnUrl: 'https://yourdomain.com/return',
+    paypageLang: 'ar',
+    hideShipping: false  // Set to true if you want to hide shipping details on the payment page
+);
+
+// Generate PaymentDTO Page
+$response = $clickpay->createPaymentPage($paymentDTO);
 
 dd($response);
 ```
@@ -179,7 +190,6 @@ payment is authorized at the time of order placement, but you only want to captu
 **Example:**
 
 ```php
-use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
 $clickpay = app(PaymentGatewayInterface::class);
@@ -203,7 +213,6 @@ requests a refund for their order.
 **Example:**
 
 ```php
-use GranadaPride\Clickpay\ClickpayClient;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
 
 $clickpay = app(PaymentGatewayInterface::class);

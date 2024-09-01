@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace GranadaPride\Clickpay\Contracts;
 
-use GranadaPride\Clickpay\DTO\Payment;
+use GranadaPride\Clickpay\DTO\PaymentDTO;
 
 interface PaymentGatewayInterface
 {
-    public function createPaymentPage(Payment $details): array;
+    public function createPaymentPage(PaymentDTO $details): array;
 
     public function queryTransaction(string $transactionReference): array;
 

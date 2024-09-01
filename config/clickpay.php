@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'currency' => env('CLICKPAY_CURRENCY', 'USD'),
+    'currency' => env('CLICKPAY_CURRENCY', 'SAR'),
 
     /*
     |--------------------------------------------------------------------------

@@ -7,7 +7,7 @@ namespace GranadaPride\Clickpay;
 use Exception;
 use GranadaPride\Clickpay\Contracts\HttpClientInterface;
 use GranadaPride\Clickpay\Contracts\PaymentGatewayInterface;
-use GranadaPride\Clickpay\DTO\Payment;
+use GranadaPride\Clickpay\DTO\PaymentDTO;
 use GranadaPride\Clickpay\Exceptions\PaymentException;
 
 class ClickpayClient implements PaymentGatewayInterface
@@ -26,10 +26,10 @@ class ClickpayClient implements PaymentGatewayInterface
         $this->currency = $currency;
     }
 
-    public function createPaymentPage(Payment $payment): array
+    public function createPaymentPage(PaymentDTO $paymentDTO): array
     {
         try {
-            return $this->httpClient->post('payment/request', $this->buildPayload($payment));
+            return $this->httpClient->post('payment/request', $this->buildPayload($paymentDTO));
         } catch (Exception $e) {
             throw new PaymentException('Failed to create Clickpay payment page: ' . $e->getMessage());
         }
@@ -82,26 +82,34 @@ class ClickpayClient implements PaymentGatewayInterface
     }
 
 
-    private function buildPayload(Payment $payment): array
+    private function buildPayload(PaymentDTO $paymentDTO): array
     {
-        return [
+        $payload = [
             'profile_id' => intval($this->profileId),
             'tran_type' => 'sale',
             'tran_class' => 'ecom',
-            'paypage_lang' => $payment->paypageLang,
-            'callback' => $payment->callbackUrl,
-            'return' => $payment->returnUrl,
+            'paypage_lang' => $paymentDTO->paypageLang,
+            'callback' => $paymentDTO->callbackUrl,
+            'return' => $paymentDTO->returnUrl,
             'user_defined' => [
                 'udf3' => 'UDF3 Test3',
                 'udf9' => 'UDF9 Test9',
             ],
-            'customer_details' => $payment->customer->toArray(),
-            'shipping_details' => $payment->shipping->toArray(),
-            'cart_id' => $payment->cartId,
-            'cart_amount' => $payment->cartAmount,
-            'cart_description' => $payment->cartDescription,
+            'cart_id' => strval($paymentDTO->cartId),
+            'cart_amount' => $paymentDTO->cartAmount,
+            'cart_description' => $paymentDTO->cartDescription,
             'cart_currency' => $this->currency,
-            'hide_shipping' => $payment->hideShipping,
+            'hide_shipping' => $paymentDTO->hideShipping,
         ];
+
+        if (isset($paymentDTO->customerDTO)) {
+            $payload['customer_details'] = $paymentDTO->customerDTO->toArray();
+        }
+
+        if (isset($paymentDTO->shippingDTO)) {
+            $payload['shipping_details'] = $paymentDTO->shippingDTO->toArray();
+        }
+
+        return $payload;
     }
 }
