@@ -1,4 +1,4 @@
-[![Github All Releases](https://img.shields.io/packagist/dt/granada-pride/laravel-clickpaysa)]()
+[![Github All Releases](https://img.shields.io/packagist/dt/granada-pride/clickpaysa)]()
 
 # Clickpaysa Payment Gateway Integration for Laravel
 
